@@ -7,17 +7,26 @@ import os
 load_dotenv()
 
 def ingestion():
-    #Extract
-    df = pd.read_csv('/home/caiouehara/code-workspace/ADATech-AnalyticsEngineering/data/listings.csv')
-    display(df)
+    data = extractDataCSV('/home/caiouehara/code-workspace/ADATech-AnalyticsEngineering/rawdata/listings.csv')
+    loadDataPSQL(data)
+    return data
 
-    #Load bronze data
+def extractDataCSV(path_csv):
+    print("Extracting CSV data from: " + path_csv)
+    data = pd.read_csv(path_csv)
+    display(data)
+    return data
+
+def loadDataPSQL(data):
     conn_string = os.getenv("db_conn_string")
+    print("Loading PSQL data to " + conn_string)
+    
     try: 
         engine = create_engine(conn_string) 
         conn = engine.connect()
-        df.to_sql('bronze_data', con=conn, if_exists='replace', 
+        data.to_sql('bronze_data', con=conn, if_exists='replace', 
         index=False)
         print("PSQL Updated")
+        return data
     except Exception as e:
         raise e

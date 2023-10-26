@@ -1,2 +1,5 @@
 */__pycache__
 .env
+_logs/
+rawdata/*
+logs/*
